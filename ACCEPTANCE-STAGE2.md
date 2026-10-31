@@ -10,10 +10,10 @@ Stage 2 is implemented and validated locally. The Lab Manager can start, stop,
 reset, inspect and read evidence through a constrained privileged helper. Week 1
 was validated end to end through both the CLI and the Lab Manager.
 
-GitHub publication targets `https://github.com/mitayag/iotsecvm.git`, verified
-as an empty repository before the first push. Native Ubuntu 24.04 LTS x86-64
-execution, root systemd operation and the final GitHub Actions result remain
-pending and are recorded in the publication addendum.
+GitHub publication completed at `https://github.com/mitayag/iotsecvm`, branch
+`main`. The repository was verified empty before the first push, and all three
+GitHub Actions workflows passed. Native Ubuntu 24.04 LTS x86-64 execution and
+root systemd operation remain pending.
 
 ## Phase A: Commit and publication
 
@@ -21,15 +21,42 @@ pending and are recorded in the publication addendum.
 | --- | --- |
 | Local repository | Initialized on branch `main` |
 | Stage 1 commit | `78785ed` - `feat: complete Stage 1 IoT lab foundation` |
+| Stage 2 commit | `aacd4aa` - `feat: add functional Stage 2 lab manager and helper` |
 | Remote | `origin` -> `https://github.com/mitayag/iotsecvm.git` |
 | Remote state before push | Empty repository; no conflicting history |
 | Push | Authorized, non-force push to `origin/main` |
-| GitHub Actions | Triggered by the push; final results recorded in the publication addendum |
+| GitHub Actions | All workflows passed; see the publication addendum |
 | Secrets / bundles | `var/`, `dist/`, `.venv/`, keys and caches are gitignored |
 
-The Stage 1 commit and Stage 2 changes were audited before publication. No
-private keys, generated bundles, student data, local environment files, caches,
-instructor answers or unnecessary build artifacts were included.
+The Stage 1 commit and Stage 2 changes were audited before publication:
+
+- `git check-ignore` confirmed the generated SSH keys, offline bundle, `.venv`,
+  pytest cache and runtime `var/` data are excluded.
+- Secret scans found no private key blocks, GitHub/AWS/Slack tokens,
+  credential assignments or certificates.
+- No instructor answer keys or student data are present.
+- All Compose files were checked for host `ports:` publishing; none exist.
+- No untracked file over 1 MB was found in the staged source.
+- The 56 MB offline bundle remains outside Git.
+
+## Publication addendum
+
+| Item | Result |
+| --- | --- |
+| Repository | `https://github.com/mitayag/iotsecvm` (public) |
+| Origin | `https://github.com/mitayag/iotsecvm.git` |
+| Branch | `main`, tracking `origin/main` |
+| Remote preflight | Empty repository; no conflicting history |
+| Push method | Authenticated SSH to the same repository because the GitHub OAuth token lacked `workflow` scope for HTTPS |
+| Remote `main` | `aacd4aa2929085a76ab4cf8698094e19cece8072` at first publication |
+| Files verified | 157 paths in the GitHub tree, including workflows, docs, helper, Week 1 and manifests |
+| Validate configuration | Run `41186957053`: success |
+| Build container images | Run `41186957027`: success |
+| Integration tests | Run `41186957184`: success, 62 passed, 1 warning in 78.63s |
+
+The SSH push did not change the configured HTTPS origin and did not overwrite
+remote history. The integration run executed the Linux-only peer UID rejection
+test that is skipped on macOS.
 
 ## Phase B: Functional Lab Manager
 
