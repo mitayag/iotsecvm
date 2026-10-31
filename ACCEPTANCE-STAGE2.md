@@ -22,6 +22,7 @@ root systemd operation remain pending.
 | Local repository | Initialized on branch `main` |
 | Stage 1 commit | `78785ed` - `feat: complete Stage 1 IoT lab foundation` |
 | Stage 2 commit | `aacd4aa` - `feat: add functional Stage 2 lab manager and helper` |
+| Acceptance prep commit | `d26c2a7` - `test: prepare native Ubuntu acceptance and offline tools` |
 | Remote | `origin` -> `https://github.com/mitayag/iotsecvm.git` |
 | Remote state before push | Empty repository; no conflicting history |
 | Push | Authorized, non-force push to `origin/main` |
@@ -53,6 +54,9 @@ The Stage 1 commit and Stage 2 changes were audited before publication:
 | Validate configuration | Run `41186957053`: success |
 | Build container images | Run `41186957027`: success |
 | Integration tests | Run `41186957184`: success, 62 passed, 1 warning in 78.63s |
+| Acceptance prep validation | Run `41188051779`: success |
+| Acceptance prep image build | Run `41188051746`: success |
+| Acceptance prep integration | Run `41188051790`: success, 62 passed, 1 warning in 80.15s |
 
 The SSH push did not change the configured HTTPS origin and did not overwrite
 remote history. The integration run executed the Linux-only peer UID rejection
@@ -176,7 +180,7 @@ installation and `iotlab-students` group access were **not executed** on this ma
 Final local run:
 
 ```text
-61 passed, 1 skipped, 1 warning in 63.47s
+61 passed, 1 skipped, 1 warning in 66.24s
 ```
 
 The skipped test is Linux-only peer UID rejection; it is expected to run in
