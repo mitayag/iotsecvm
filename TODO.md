@@ -15,12 +15,22 @@
 - [x] Run local validation and integration tests.
 - [ ] Obtain explicit approval before pushing any changes to GitHub.
 
-## Stage 2 candidate work
+## Stage 2: Functional Lab Manager
+
+- [x] Add constrained privileged helper with Unix socket.
+- [x] Allowlist lab operations and reject arbitrary commands/paths.
+- [x] Add manager start/stop/reset/status/instructions/evidence endpoints.
+- [x] Add available/planned/assessment filtering in the web interface.
+- [x] Add helper/manager systemd units and desktop launcher.
+- [x] Add helper, API and manager end-to-end tests.
+- [x] Verify Week 1 manager workflow locally.
+- [ ] Publish Stage 1/2 to GitHub (blocked: no remote configured).
+- [ ] Run GitHub Actions and record CI status.
+- [ ] Execute native Ubuntu 24.04 x86-64 installation and root helper test.
+
+## Deferred
 
 - [ ] Implement Weeks 2-5 images and manifests.
-- [ ] Replace the disabled manager action path with a privileged helper daemon
-      on a Unix socket, with an allow-list and no Docker socket exposure.
-- [ ] Add a sudoers-reviewed action path for the systemd manager.
 - [ ] Add per-student evidence packaging and instructor collection workflow.
 - [ ] Publish signed offline bundles and add signature verification.
 - [ ] Add image SBOM retention and vulnerability scanning policy.
@@ -31,8 +41,8 @@
 ## Known limitations
 
 - Weeks 2-18 are planned manifests only.
-- The lab manager mutation API is disabled by default.
-- Week 1 is validated on x86-64 only.
-- The systemd unit assumes the default `/opt/iotlab` destination.
-- `dist/` bundles are not committed and have not been transferred to a VM in
-  this stage.
+- Week 1 is validated locally on linux/amd64 through Docker emulation; native
+  Ubuntu x86-64 systemd deployment is still pending.
+- The helper root/systemd path has not been exercised on native Ubuntu.
+- `dist/` bundles are not committed.
+- GitHub publication is blocked because no remote exists.

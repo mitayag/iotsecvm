@@ -51,7 +51,23 @@ Images are tagged:
 image: iotlab/week07-target:${IOTLAB_VERSION:-0.1.0}
 ```
 
-## 4. Add lifecycle expectations
+## 4. Manager integration
+
+The Lab Manager and privileged helper support any lab that follows the standard
+scripts, manifest and Compose conventions. No web changes are required.
+
+- The helper validates the lab ID and requires `status: implemented`.
+- Start, stop, reset and status call the same fixed scripts listed in
+  `docs/lab-manager.md`.
+- Evidence listing and reading use the standard `iotlab_wNN_evidence` volume.
+- Planned labs appear in the UI but cannot be started.
+- Set `module_type: assessment` for capstone modules if they must be displayed
+  with the assessment badge.
+
+Do not add new action names, arbitrary paths or shell commands to the helper.
+New lifecycle behaviour belongs in the standard scripts.
+
+## 5. Add lifecycle expectations
 
 Compose volumes that contain disposable state must have:
 
@@ -72,13 +88,13 @@ labels:
 Mount evidence at `/evidence` in containers that produce artefacts. Reset keeps
 this volume, so it must not contain answer keys or instructor-only data.
 
-## 5. Health checks and expected services
+## 6. Health checks and expected services
 
 Every target container needs a health check; `lab-start.sh` waits for healthy
 containers. Add each service to `expected_services` and ensure its port is also
 listed in the container's `internal_ports`.
 
-## 6. Local validation
+## 7. Local validation
 
 ```bash
 python tools/validate_labs.py .
@@ -97,7 +113,7 @@ Add integration tests under `tests/` covering:
 - isolation from other networks and the internet,
 - reset restoring state while preserving evidence.
 
-## 7. Mark implemented
+## 8. Mark implemented
 
 Only after tests pass and evidence has been reviewed:
 

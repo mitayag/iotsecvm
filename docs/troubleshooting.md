@@ -36,6 +36,28 @@ docker compose -p iotlab-week01 -f labs/week01/docker-compose.yml logs --no-colo
 Common causes: images were not built, the per-lab key is missing, or a state
 volume was created with unexpected ownership.
 
+## Lab Manager reports read-only mode
+
+```bash
+systemctl status iotlab-helper.service iotlab-manager.service
+curl -s http://127.0.0.1:8080/api/health | python3 -m json.tool
+```
+
+Check the helper socket:
+
+```bash
+ls -l /run/iotlab/helper.sock
+journalctl -u iotlab-helper.service -n 50 --no-pager
+```
+
+Expected socket ownership is `root:iotlab` with mode `0660`. The manager unit
+must run with group `iotlab` and set `IOTLAB_HELPER_SOCKET`.
+
+## Lab Manager operation fails with 409 busy
+
+Only one helper operation may run at a time. Wait for the current start, stop or
+reset to finish, then retry. Check `iotlab-helper` logs for a stuck script.
+
 ## SSH login fails
 
 ```bash
@@ -46,6 +68,13 @@ scripts/lab-reset.sh week01 --yes
 The controller authorises the public key in
 `var/secrets/week01_controller_authorized_keys`. The private key is
 `var/secrets/week01_controller_ed25519`. Password authentication is disabled.
+
+On a production install, add the student account to the `iotlab` group and log
+in again:
+
+```bash
+sudo usermod -aG iotlab-students student
+```
 
 ## Reset reports evidence preservation
 

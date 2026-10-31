@@ -52,6 +52,7 @@ main() {
     >> "$dest/var/deploy/history.log"
   printf '%s\n' "$current" > "$dest/var/deploy/previous"
   log "rolled back: $current -> $version"
+  log "restart installed services: systemctl restart iotlab-helper iotlab-manager"
 }
 
 main "$@"

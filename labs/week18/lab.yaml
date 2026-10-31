@@ -3,6 +3,7 @@ id: week18
 week: 18
 title: Capstone IoT Security Assessment
 status: planned
+module_type: assessment
 summary: Assess a multi-service IoT deployment, prioritise findings and present a remediation plan.
 difficulty: advanced
 duration_minutes: 240

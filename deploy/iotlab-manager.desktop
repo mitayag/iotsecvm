@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=HAU IoT Security Lab Manager
+Comment=Open the local IoT security laboratory manager
+Exec=xdg-open http://127.0.0.1:8080
+Icon=applications-internet
+Terminal=false
+Categories=System;Security;
+Keywords=IoT;Security;Laboratory;HAU;
+StartupNotify=true

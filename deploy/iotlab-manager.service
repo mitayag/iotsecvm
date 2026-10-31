@@ -1,7 +1,8 @@
 [Unit]
 Description=HAU IoT Security Lab Manager
-After=network-online.target
-Wants=network-online.target
+Documentation=file:/opt/iotlab/current/docs/deployment.md
+After=network-online.target iotlab-helper.service
+Wants=network-online.target iotlab-helper.service
 
 [Service]
 Type=simple
@@ -9,7 +10,9 @@ User=iotlab
 Group=iotlab
 WorkingDirectory=/opt/iotlab/current
 Environment=IOTLAB_ROOT=/opt/iotlab/current
-Environment=IOTLAB_ALLOW_MUTATIONS=0
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=IOTLAB_ENABLE_ACTIONS=1
+Environment=IOTLAB_HELPER_SOCKET=/run/iotlab/helper.sock
 ExecStart=/opt/iotlab/venv/bin/uvicorn backend.app.main:app --app-dir /opt/iotlab/current --host 127.0.0.1 --port 8080
 Restart=on-failure
 RestartSec=3

@@ -7,21 +7,83 @@
     <link rel="stylesheet" href="/styles.css">
   </head>
   <body>
-    <header>
-      <p class="eyebrow">Holy Angel University</p>
-      <h1>IoT Security Virtual Laboratory</h1>
-      <p id="status" class="status">Connecting to the lab manager...</p>
+    <header class="site-header">
+      <div>
+        <p class="eyebrow">Holy Angel University</p>
+        <h1>IoT Security Virtual Laboratory</h1>
+        <p class="subtitle">18 weeks of isolated, evidence-aware IoT security practice.</p>
+      </div>
+      <div class="header-panel">
+        <p id="status" class="status" role="status">Connecting to the lab manager...</p>
+        <button id="refresh" class="button ghost" type="button">Refresh</button>
+      </div>
     </header>
+
     <main>
-      <section class="intro">
-        <h2>Weekly laboratories</h2>
-        <p>All practical work runs inside isolated Docker networks on this virtual machine.</p>
+      <section class="toolbar" aria-label="Laboratory filters">
+        <div class="filters" role="group" aria-label="Filter modules">
+          <button class="filter active" type="button" data-filter="all">All <span id="count-all">0</span></button>
+          <button class="filter" type="button" data-filter="available">Available <span id="count-available">0</span></button>
+          <button class="filter" type="button" data-filter="planned">Planned <span id="count-planned">0</span></button>
+          <button class="filter" type="button" data-filter="assessment">Assessment <span id="count-assessment">0</span></button>
+        </div>
+        <p id="mode-note" class="mode-note">Checking helper status...</p>
       </section>
+
       <section id="labs" class="grid" aria-live="polite"></section>
+
+      <section id="activity" class="activity" hidden>
+        <div class="activity-head">
+          <h2>Operation result</h2>
+          <button id="activity-close" class="button ghost" type="button">Clear</button>
+        </div>
+        <p id="activity-message" class="activity-message"></p>
+        <pre id="activity-output" class="console"></pre>
+      </section>
     </main>
+
     <footer>
-      <p>Stage 1 foundation. Use the lifecycle scripts for start, stop and reset.</p>
+      <p>Lab Manager binds to localhost. Docker access is restricted to the allowlisted helper.</p>
     </footer>
+
+    <dialog id="instructions-dialog" class="dialog">
+      <form method="dialog" class="dialog-head">
+        <h2 id="instructions-title">Instructions</h2>
+        <button class="button ghost" value="close">Close</button>
+      </form>
+      <pre id="instructions-content" class="document"></pre>
+    </dialog>
+
+    <dialog id="status-dialog" class="dialog">
+      <form method="dialog" class="dialog-head">
+        <h2 id="status-title">Container status</h2>
+        <button class="button ghost" value="close">Close</button>
+      </form>
+      <div id="status-content" class="dialog-body"></div>
+    </dialog>
+
+    <dialog id="evidence-dialog" class="dialog">
+      <form method="dialog" class="dialog-head">
+        <h2 id="evidence-title">Student evidence</h2>
+        <button class="button ghost" value="close">Close</button>
+      </form>
+      <div class="dialog-body">
+        <p id="evidence-meta" class="mode-note"></p>
+        <div class="evidence-columns">
+          <div>
+            <h3>Runtime volume</h3>
+            <ul id="runtime-files" class="file-list"></ul>
+          </div>
+          <div>
+            <h3>Host directory</h3>
+            <ul id="host-files" class="file-list"></ul>
+          </div>
+        </div>
+        <h3 id="evidence-preview-title" hidden>Preview</h3>
+        <pre id="evidence-preview" class="console" hidden></pre>
+      </div>
+    </dialog>
+
     <script src="/app.js" defer></script>
   </body>
 </html>

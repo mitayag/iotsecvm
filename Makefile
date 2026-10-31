@@ -2,7 +2,7 @@ SHELL := /bin/bash
 LAB ?= week01
 PYTHON ?= .venv/bin/python
 
-.PHONY: help venv validate config build start stop status reset test integration deploy rollback offline clean
+.PHONY: help venv validate config build start stop status reset test integration helper manager deploy rollback offline clean
 
 help:
 	@printf '%s\n' \
@@ -15,6 +15,8 @@ help:
 	  'make reset       Reset the selected lab (keeps evidence)' \
 	  'make test        Run all tests' \
 	  'make integration Run integration tests only' \
+	  'make helper      Run the privileged helper on a development socket' \
+	  'make manager     Run the Lab Manager on 127.0.0.1:8080' \
 	  'make deploy      Deploy the current version (DEST=/opt/iotlab)' \
 	  'make rollback    Roll back to the previous release' \
 	  'make offline     Create an offline bundle in dist/' \
@@ -50,6 +52,14 @@ test:
 
 integration:
 	$(PYTHON) -m pytest -m integration tests
+
+helper:
+	PYTHONPATH=. $(PYTHON) -m backend.helper.server --root . \
+	  --socket /tmp/iotlab-helper.sock --allowed-uid $$(id -u)
+
+manager:
+	IOTLAB_HELPER_SOCKET=/tmp/iotlab-helper.sock IOTLAB_ENABLE_ACTIONS=1 \
+	  $(PYTHON) -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8080
 
 deploy:
 	scripts/deploy.sh --dest $${DEST:-/opt/iotlab}

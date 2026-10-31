@@ -3,6 +3,7 @@ id: weekNN
 week: 1
 title: Replace with a concise lab title
 status: planned
+module_type: lab
 summary: >-
   Describe the scenario, the isolated lab components and what the student must
   demonstrate by the end of the activity.

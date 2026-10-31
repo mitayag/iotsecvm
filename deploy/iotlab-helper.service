@@ -1,0 +1,30 @@
+[Unit]
+Description=HAU IoT Security Lab Privileged Helper
+Documentation=file:/opt/iotlab/current/docs/security.md
+After=docker.service
+Requires=docker.service
+Before=iotlab-manager.service
+
+[Service]
+Type=simple
+User=root
+Group=iotlab
+RuntimeDirectory=iotlab
+RuntimeDirectoryMode=0750
+Environment=IOTLAB_ROOT=/opt/iotlab/current
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=IOTLAB_HELPER_SOCKET=/run/iotlab/helper.sock
+Environment=IOTLAB_ALLOWED_UIDS=__IOTLAB_UID__
+Environment=IOTLAB_KEY_GROUP=iotlab-students
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ExecStart=/opt/iotlab/venv/bin/python -m backend.helper.server --root /opt/iotlab/current --socket /run/iotlab/helper.sock --socket-group iotlab
+Restart=on-failure
+RestartSec=2
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/opt/iotlab/var /run/iotlab
+
+[Install]
+WantedBy=multi-user.target

@@ -31,11 +31,14 @@ published. Do not reuse this configuration outside the lab.
 
 ## Secrets
 
-- `scripts/gen-lab-keys.sh` creates Ed25519 keys under `var/secrets/` with mode
-  `0700` for the directory and `0600` for private keys.
+- `scripts/gen-lab-keys.sh` creates Ed25519 keys under `var/secrets/`.
+- Development mode uses `0700` for the directory and `0600` for the private key.
+- Production installs set `IOTLAB_KEY_GROUP=iotlab-students`, `0750` for the directory,
+  and `0640` for the private key. Add the student account to the `iotlab-students` group.
 - `.gitignore` excludes keys, `var/` runtime data and `dist/` bundles.
 - Docker Compose exposes only the public key as a secret to the controller.
-- The manager has no secret storage in Stage 1.
+- The web manager is not a member of `iotlab-students` and does not read or
+  store private keys.
 
 ## Evidence
 
@@ -44,13 +47,22 @@ Evidence volumes use the label `iotlab.role=evidence`. Reset removes only
 `var/` storage. Students can export evidence with
 `scripts/lab-evidence.sh export`.
 
-## Manager API
+## Manager and helper boundary
 
-Read-only endpoints expose lab metadata. Mutating endpoints return HTTP 403
-unless `IOTLAB_ALLOW_MUTATIONS=1` is set explicitly. Even when enabled, the
-service should not receive the Docker socket. A reviewed privileged helper with
-a narrow allow-list and a Unix socket is required before enabling actions in
-production; see `TODO.md`.
+- The FastAPI process runs as `iotlab` and never receives the Docker socket.
+- Mutation requests go to `iotlab-helper` over `/run/iotlab/helper.sock`,
+  mode `0660`, group `iotlab`.
+- The helper runs as root only because Docker access requires it. It accepts a
+  versioned JSON protocol, validates lab IDs and filenames, and executes only
+  fixed scripts under `scripts/`.
+- No request field can choose a script, path, shell fragment or Compose file.
+- A global helper lock prevents concurrent resets and starts from corrupting
+  state.
+- Peer UIDs are checked when the platform exposes `SO_PEERCRED` (Linux).
+- With `IOTLAB_ENABLE_ACTIONS=0`, or when the helper is unavailable, mutation
+  endpoints return 403/503 and no command runs.
+
+See `docs/lab-manager.md` for the protocol and API.
 
 ## Platform assumptions
 

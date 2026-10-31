@@ -15,7 +15,9 @@ Host (Ubuntu 24.04 LTS student VM)
 │       ├── iotlab_w01_camera_state   (reset removes)
 │       ├── iotlab_w01_gateway_data   (reset removes)
 │       └── iotlab_w01_evidence       (reset/update preserve)
-├── FastAPI lab manager on 127.0.0.1:8080 (read-only default)
+├── FastAPI lab manager on 127.0.0.1:8080 (user iotlab, no Docker access)
+├── iotlab-helper on /run/iotlab/helper.sock (root, allowlisted operations)
+├── systemd units and desktop launcher
 └── CLI lifecycle scripts
 ```
 
@@ -30,7 +32,9 @@ The gateway is deliberately dual-homed to represent a management bridge.
 | Host to lab | No published ports; CLI or local UI only |
 | IoT segment to management | Gateway is the only dual-homed service |
 | Lab to internet | Internal Docker bridge networks without NAT |
-| Student to Docker daemon | No socket mounted; manager actions disabled by default |
+| Web manager to Docker | No socket; requests pass through the allowlisted helper |
+| Helper requests | Unix socket, lab/filename allowlists, fixed scripts, global lock |
+| Helper to Docker | Root-owned helper invokes Docker CLI; no arbitrary commands or paths |
 | Evidence to reset/update | Dedicated volume labelled `iotlab.role=evidence` |
 | Student to instructor answers | Assessment material excluded from repository |
 
@@ -51,9 +55,11 @@ removes only volumes labelled `iotlab.role=state`, leaving evidence and keys.
 `deploy.sh` installs immutable release directories and switches a `current`
 symlink; `rollback.sh` restores a prior release.
 
-## Stage 1 limitations
+## Stage 2 limitations
 
 - Week 1 is the only implemented runtime.
-- The manager API is read-only by default.
+- The helper is tested locally as a non-root process and is configured as root
+  in systemd; the root service path still needs native Ubuntu validation.
 - Automated assessment answers are not present.
-- ARM64 is documented but not part of the accepted Stage 1 target.
+- ARM64 is documented but not part of the accepted Stage 1/2 target.
+- Weeks 2-18 are planned manifests only.

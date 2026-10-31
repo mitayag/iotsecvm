@@ -44,8 +44,15 @@ required=(
   tools/validate_labs.py
   labs/week01/lab.yaml
   labs/week01/docker-compose.yml
+  backend/helper/server.py
+  deploy/iotlab-helper.service
+  deploy/iotlab-manager.service
+  deploy/iotlab-manager.desktop
   scripts/lab-start.sh
   scripts/lab-reset.sh
+  scripts/lab-inspect.sh
+  scripts/lab-evidence-list.sh
+  scripts/lab-evidence-read.sh
   docs/adding-labs.md
   docs/deployment.md
 )

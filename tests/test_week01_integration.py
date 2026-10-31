@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import re
 import time
 
 import pytest
@@ -12,9 +11,11 @@ from conftest import (
     IOT_NETWORK,
     MGMT_NETWORK,
     ROOT,
-    SCANNER_IMAGE,
+    assert_open,
     docker_available,
+    nmap_scan,
     run,
+    ssh_whoami,
 )
 
 pytestmark = [
@@ -40,35 +41,6 @@ def ps_payload() -> list[dict]:
     return [json.loads(line) for line in text.splitlines() if line.strip()]
 
 
-def nmap(network: str, targets: list[str]) -> str:
-    return run(
-        [
-            "docker",
-            "run",
-            "--rm",
-            "--network",
-            network,
-            SCANNER_IMAGE,
-            "-sT",
-            "-Pn",
-            "-n",
-            "-p",
-            "22,1883,8080,8554",
-            *targets,
-        ],
-        timeout=180,
-    ).stdout
-
-
-def assert_open(scan: str, ip: str, ports: list[int]) -> None:
-    blocks = [block for block in re.split(r"Nmap scan report for ", scan) if block.startswith(ip)]
-    assert blocks, f"no scan report for {ip}\n{scan}"
-    for port in ports:
-        assert re.search(rf"^{port}/tcp\s+open\b", blocks[0], re.MULTILINE), (
-            f"port {port} not open on {ip}\n{blocks[0]}"
-        )
-
-
 def test_containers_are_healthy(lab_running: str) -> None:
     services = {item["Service"]: item for item in ps_payload()}
     assert set(services) == {"camera", "gateway", "controller"}
@@ -81,7 +53,7 @@ def test_nmap_discovers_iot_devices(lab_running: str, container_ips: dict) -> No
     camera_ip = container_ips["iotlab_w01_camera"]["ip"]
     gateway_ip = container_ips["iotlab_w01_gateway"]["ip"]
 
-    iot_scan = nmap(IOT_NETWORK, [camera_ip, gateway_ip])
+    iot_scan = nmap_scan(IOT_NETWORK, [camera_ip, gateway_ip])
     assert_open(iot_scan, camera_ip, [8080, 8554])
     assert_open(iot_scan, gateway_ip, [1883])
 
@@ -90,7 +62,7 @@ def test_nmap_discovers_management_services(lab_running: str, container_ips: dic
     controller_ip = container_ips["iotlab_w01_controller"]["ip"]
     gateway_ip = container_ips["iotlab_w01_gateway"]["mgmt_ip"]
 
-    mgmt_scan = nmap(MGMT_NETWORK, [controller_ip, gateway_ip])
+    mgmt_scan = nmap_scan(MGMT_NETWORK, [controller_ip, gateway_ip])
     assert_open(mgmt_scan, controller_ip, [22])
     assert_open(mgmt_scan, gateway_ip, [1883])
 
@@ -128,35 +100,8 @@ def test_iot_network_cannot_reach_controller_or_internet(
 
 
 def test_controller_accepts_student_key(lab_running: str) -> None:
-    image = "iotlab/test-ssh-client:0.1.0"
-    run(
-        ["docker", "build", "-q", "-t", image, str(ROOT / "tests/images/ssh-client")],
-        timeout=300,
-    )
-    key = ROOT / "var/secrets/week01_controller_ed25519"
-    result = run(
-        [
-            "docker",
-            "run",
-            "--rm",
-            "--network",
-            MGMT_NETWORK,
-            "-v",
-            f"{key}:/key:ro",
-            image,
-            "-i",
-            "/key",
-            "-o",
-            "StrictHostKeyChecking=no",
-            "-o",
-            "UserKnownHostsFile=/dev/null",
-            "-o",
-            "ConnectTimeout=5",
-            "labuser@controller",
-            "whoami",
-        ],
-        check=False,
-        timeout=120,
+    result = ssh_whoami(
+        MGMT_NETWORK, ROOT / "var/secrets/week01_controller_ed25519"
     )
     assert result.returncode == 0, result.stderr
     assert "labuser" in result.stdout

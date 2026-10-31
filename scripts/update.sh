@@ -116,6 +116,7 @@ main() {
   fi
 
   log "update complete: $dest/current -> $version"
+  log "restart installed services: systemctl restart iotlab-helper iotlab-manager"
 }
 
 main "$@"

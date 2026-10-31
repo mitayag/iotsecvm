@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -41,6 +42,72 @@ def docker_available() -> bool:
 requires_docker = pytest.mark.skipif(
     not docker_available(), reason="Docker daemon is not available"
 )
+
+
+def nmap_scan(network: str, targets: list[str]) -> str:
+    return run(
+        [
+            "docker",
+            "run",
+            "--rm",
+            "--network",
+            network,
+            SCANNER_IMAGE,
+            "-sT",
+            "-Pn",
+            "-n",
+            "-p",
+            "22,1883,8080,8554",
+            *targets,
+        ],
+        timeout=180,
+    ).stdout
+
+
+def assert_open(scan: str, ip: str, ports: list[int]) -> None:
+    blocks = [block for block in re.split(r"Nmap scan report for ", scan) if block.startswith(ip)]
+    assert blocks, f"no scan report for {ip}\n{scan}"
+    for port in ports:
+        assert re.search(rf"^{port}/tcp\s+open\b", blocks[0], re.MULTILINE), (
+            f"port {port} not open on {ip}\n{blocks[0]}"
+        )
+
+
+def build_ssh_client() -> str:
+    image = "iotlab/test-ssh-client:0.1.0"
+    run(
+        ["docker", "build", "-q", "-t", image, str(ROOT / "tests/images/ssh-client")],
+        timeout=300,
+    )
+    return image
+
+
+def ssh_whoami(network: str, key: Path, host: str = "controller") -> subprocess.CompletedProcess:
+    image = build_ssh_client()
+    return run(
+        [
+            "docker",
+            "run",
+            "--rm",
+            "--network",
+            network,
+            "-v",
+            f"{key}:/key:ro",
+            image,
+            "-i",
+            "/key",
+            "-o",
+            "StrictHostKeyChecking=no",
+            "-o",
+            "UserKnownHostsFile=/dev/null",
+            "-o",
+            "ConnectTimeout=5",
+            f"labuser@{host}",
+            "whoami",
+        ],
+        check=False,
+        timeout=120,
+    )
 
 
 @pytest.fixture(scope="session")

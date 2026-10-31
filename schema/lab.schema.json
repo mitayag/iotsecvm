@@ -41,7 +41,17 @@
       "maxLength": 120
     },
     "status": {
-      "enum": ["planned", "implemented"]
+      "enum": [
+        "planned",
+        "implemented"
+      ]
+    },
+    "module_type": {
+      "enum": [
+        "lab",
+        "assessment"
+      ],
+      "default": "lab"
     },
     "summary": {
       "type": "string",
@@ -49,7 +59,11 @@
       "maxLength": 1000
     },
     "difficulty": {
-      "enum": ["beginner", "intermediate", "advanced"]
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ]
     },
     "duration_minutes": {
       "type": "integer",
@@ -75,7 +89,12 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["name", "image", "role", "internal_ports"],
+        "required": [
+          "name",
+          "image",
+          "role",
+          "internal_ports"
+        ],
         "properties": {
           "name": {
             "type": "string",
@@ -86,7 +105,13 @@
             "minLength": 3
           },
           "role": {
-            "enum": ["target", "gateway", "controller", "service", "tooling"]
+            "enum": [
+              "target",
+              "gateway",
+              "controller",
+              "service",
+              "tooling"
+            ]
           },
           "description": {
             "type": "string"
@@ -94,7 +119,10 @@
           "networks": {
             "type": "array",
             "items": {
-              "enum": ["iot", "mgmt"]
+              "enum": [
+                "iot",
+                "mgmt"
+              ]
             },
             "uniqueItems": true
           },
@@ -124,7 +152,12 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["name", "container", "port", "protocol"],
+        "required": [
+          "name",
+          "container",
+          "port",
+          "protocol"
+        ],
         "properties": {
           "name": {
             "type": "string"
@@ -138,7 +171,10 @@
             "maximum": 65535
           },
           "protocol": {
-            "enum": ["tcp", "udp"]
+            "enum": [
+              "tcp",
+              "udp"
+            ]
           },
           "description": {
             "type": "string"
@@ -152,7 +188,10 @@
     "networks": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["iot", "mgmt"],
+      "required": [
+        "iot",
+        "mgmt"
+      ],
       "properties": {
         "iot": {
           "$ref": "#/$defs/network"
@@ -165,10 +204,17 @@
     "reset": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["strategy", "preserve"],
+      "required": [
+        "strategy",
+        "preserve"
+      ],
       "properties": {
         "strategy": {
-          "enum": ["rebuild-state", "restore-snapshot", "custom"]
+          "enum": [
+            "rebuild-state",
+            "restore-snapshot",
+            "custom"
+          ]
         },
         "preserve": {
           "type": "array",
@@ -187,7 +233,10 @@
     "evidence": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["path", "artifacts"],
+      "required": [
+        "path",
+        "artifacts"
+      ],
       "properties": {
         "path": {
           "type": "string",
@@ -208,7 +257,11 @@
     "safety": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["privileged", "host_network", "external_ports"],
+      "required": [
+        "privileged",
+        "host_network",
+        "external_ports"
+      ],
       "properties": {
         "privileged": {
           "const": false
@@ -231,7 +284,9 @@
     "assessment": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["instructor_only"],
+      "required": [
+        "instructor_only"
+      ],
       "properties": {
         "instructor_only": {
           "const": true
@@ -246,7 +301,11 @@
     "network": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["name", "subnet", "internal"],
+      "required": [
+        "name",
+        "subnet",
+        "internal"
+      ],
       "properties": {
         "name": {
           "type": "string",

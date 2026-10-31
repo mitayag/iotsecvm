@@ -13,7 +13,8 @@ Usage: scripts/install.sh [options]
   --dest DIR             Installation home (default: /opt/iotlab)
   --offline-images FILE  docker save archive to load during install
   --wheelhouse DIR       Directory containing pre-downloaded Python wheels
-  --no-systemd           Do not install or start the lab manager service
+  --no-systemd           Do not install or start the helper/manager services
+  --no-desktop           Do not install the desktop launcher
   --skip-verify          Skip the post-install verification
   --yes                  Non-interactive confirmation
 
@@ -27,6 +28,7 @@ main() {
   local offline_images=""
   local wheelhouse=""
   local use_systemd=1
+  local use_desktop=1
   local skip_verify=0
 
   while [[ $# -gt 0 ]]; do
@@ -35,6 +37,7 @@ main() {
       --offline-images) offline_images="${2:-}"; shift ;;
       --wheelhouse) wheelhouse="${2:-}"; shift ;;
       --no-systemd) use_systemd=0 ;;
+      --no-desktop) use_desktop=0 ;;
       --skip-verify) skip_verify=1 ;;
       --yes|-y) ;;
       -h|--help) usage; exit 0 ;;
@@ -103,17 +106,46 @@ main() {
       if ! getent group iotlab >/dev/null 2>&1; then
         groupadd --system iotlab
       fi
+      if ! getent group iotlab-students >/dev/null 2>&1; then
+        groupadd --system iotlab-students
+      fi
       if ! id -u iotlab >/dev/null 2>&1; then
         useradd --system --gid iotlab --home-dir "$dest" \
           --shell /usr/sbin/nologin iotlab
       fi
-      sed "s|/opt/iotlab|$dest|g" \
+
+      chgrp iotlab "$dest/var" "$dest/var/evidence"
+      chmod 0750 "$dest/var"
+      chmod 0770 "$dest/var/evidence"
+      IOTLAB_KEY_GROUP=iotlab-students "$dest/current/scripts/gen-lab-keys.sh" week01
+
+      local manager_uid
+      manager_uid="$(id -u iotlab)"
+      sed -e "s|/opt/iotlab|$dest|g" \
+        -e "s|__IOTLAB_UID__|$manager_uid|g" \
+        "$dest/current/deploy/iotlab-helper.service" \
+        > /etc/systemd/system/iotlab-helper.service
+      sed -e "s|/opt/iotlab|$dest|g" \
         "$dest/current/deploy/iotlab-manager.service" \
         > /etc/systemd/system/iotlab-manager.service
-      chmod 0644 /etc/systemd/system/iotlab-manager.service
+      chmod 0644 /etc/systemd/system/iotlab-helper.service \
+        /etc/systemd/system/iotlab-manager.service
+
       systemctl daemon-reload
-      systemctl enable --now iotlab-manager.service
+      systemctl enable iotlab-helper.service iotlab-manager.service
+      systemctl restart iotlab-helper.service
+      systemctl restart iotlab-manager.service
+      log "privileged helper started on /run/iotlab/helper.sock"
       log "lab manager service started on 127.0.0.1:8080"
+
+      if (( use_desktop == 1 )); then
+        install -m 0644 "$dest/current/deploy/iotlab-manager.desktop" \
+          /usr/share/applications/iotlab-manager.desktop
+        if command -v update-desktop-database >/dev/null 2>&1; then
+          update-desktop-database -q /usr/share/applications || true
+        fi
+        log "desktop launcher installed: HAU IoT Security Lab Manager"
+      fi
     fi
   fi
 
