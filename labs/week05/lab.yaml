@@ -1,0 +1,42 @@
+schema_version: 1
+id: week05
+week: 5
+title: SSH Access Control and Key Hygiene
+status: planned
+summary: Audit SSH configuration on the controller, validate key-only access and harden the service.
+difficulty: beginner
+duration_minutes: 90
+learning_objectives:
+  - Inspect SSH algorithms and authentication settings.
+  - Verify key-only access with per-student keys.
+  - Apply and validate SSH hardening controls.
+containers: []
+expected_services: []
+networks:
+  iot:
+    name: iotlab_w05_iot
+    subnet: 10.231.5.0/24
+    internal: true
+  mgmt:
+    name: iotlab_w05_mgmt
+    subnet: 10.232.5.0/24
+    internal: true
+reset:
+  strategy: rebuild-state
+  preserve:
+    - evidence
+  notes: Recreates controller state without deleting student key material.
+evidence:
+  path: /evidence
+  artifacts:
+    - ssh-audit.txt
+    - hardening-report.md
+  retention: Retained for instructor review.
+safety:
+  privileged: false
+  host_network: false
+  external_ports: []
+  review_notes: SSH is reachable only from the management network.
+assessment:
+  instructor_only: true
+  location: Instructor repository.

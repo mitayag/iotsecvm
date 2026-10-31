@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HAU IoT Security Lab Manager</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header>
+      <p class="eyebrow">Holy Angel University</p>
+      <h1>IoT Security Virtual Laboratory</h1>
+      <p id="status" class="status">Connecting to the lab manager...</p>
+    </header>
+    <main>
+      <section class="intro">
+        <h2>Weekly laboratories</h2>
+        <p>All practical work runs inside isolated Docker networks on this virtual machine.</p>
+      </section>
+      <section id="labs" class="grid" aria-live="polite"></section>
+    </main>
+    <footer>
+      <p>Stage 1 foundation. Use the lifecycle scripts for start, stop and reset.</p>
+    </footer>
+    <script src="/app.js" defer></script>
+  </body>
+</html>

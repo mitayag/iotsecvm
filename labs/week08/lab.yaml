@@ -1,0 +1,42 @@
+schema_version: 1
+id: week08
+week: 8
+title: IoT Web Interface Authentication Flaws
+status: planned
+summary: Test a simulated device web interface for authentication and session management weaknesses.
+difficulty: intermediate
+duration_minutes: 120
+learning_objectives:
+  - Map authentication and session flows.
+  - Test for weak credential and session controls in an authorised lab.
+  - Recommend hardened authentication settings.
+containers: []
+expected_services: []
+networks:
+  iot:
+    name: iotlab_w08_iot
+    subnet: 10.231.8.0/24
+    internal: true
+  mgmt:
+    name: iotlab_w08_mgmt
+    subnet: 10.232.8.0/24
+    internal: true
+reset:
+  strategy: rebuild-state
+  preserve:
+    - evidence
+  notes: Rebuilds accounts and sessions to the seeded state.
+evidence:
+  path: /evidence
+  artifacts:
+    - auth-testing-notes.md
+    - session-review.txt
+  retention: Retained for instructor review.
+safety:
+  privileged: false
+  host_network: false
+  external_ports: []
+  review_notes: The vulnerable interface is not reachable from the host.
+assessment:
+  instructor_only: true
+  location: Instructor repository.

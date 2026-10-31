@@ -1,0 +1,59 @@
+schema_version: 1
+id: weekNN
+week: 1
+title: Replace with a concise lab title
+status: planned
+summary: >-
+  Describe the scenario, the isolated lab components and what the student must
+  demonstrate by the end of the activity.
+difficulty: beginner
+duration_minutes: 90
+learning_objectives:
+  - Replace with a measurable learning objective.
+  - Replace with a second measurable learning objective.
+prerequisites: []
+containers:
+  - name: target
+    image: iotlab/weekNN-target
+    role: target
+    description: Replace with the target description.
+    networks:
+      - iot
+    internal_ports:
+      - 8080
+    privileged: false
+    host_network: false
+    healthcheck: HTTP GET /health on port 8080
+expected_services:
+  - name: target-http
+    container: target
+    port: 8080
+    protocol: tcp
+    description: Replace with the service description.
+networks:
+  iot:
+    name: iotlab_wNN_iot
+    subnet: 10.231.NN.0/24
+    internal: true
+  mgmt:
+    name: iotlab_wNN_mgmt
+    subnet: 10.232.NN.0/24
+    internal: true
+reset:
+  strategy: rebuild-state
+  preserve:
+    - evidence
+  notes: Replace with the reset behaviour.
+evidence:
+  path: /evidence
+  artifacts:
+    - findings.md
+  retention: Retained for instructor review.
+safety:
+  privileged: false
+  host_network: false
+  external_ports: []
+  review_notes: Replace with the isolation review statement.
+assessment:
+  instructor_only: true
+  location: Instructor repository.

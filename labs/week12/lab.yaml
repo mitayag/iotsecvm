@@ -1,0 +1,42 @@
+schema_version: 1
+id: week12
+week: 12
+title: IoT Protocol Fuzzing and Robustness
+status: planned
+summary: Perform controlled robustness testing against a simulated CoAP and HTTP device service.
+difficulty: advanced
+duration_minutes: 150
+learning_objectives:
+  - Build a bounded and reproducible fuzzing plan.
+  - Identify malformed input handling weaknesses.
+  - Document crash evidence and remediation options.
+containers: []
+expected_services: []
+networks:
+  iot:
+    name: iotlab_w12_iot
+    subnet: 10.231.12.0/24
+    internal: true
+  mgmt:
+    name: iotlab_w12_mgmt
+    subnet: 10.232.12.0/24
+    internal: true
+reset:
+  strategy: rebuild-state
+  preserve:
+    - evidence
+  notes: Recreates target containers after each fuzzing run.
+evidence:
+  path: /evidence
+  artifacts:
+    - fuzz-plan.md
+    - crash-evidence.txt
+  retention: Retained for instructor review.
+safety:
+  privileged: false
+  host_network: false
+  external_ports: []
+  review_notes: Fuzzing is rate-limited and confined to the lab network.
+assessment:
+  instructor_only: true
+  location: Instructor repository.

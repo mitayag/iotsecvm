@@ -1,0 +1,42 @@
+schema_version: 1
+id: week15
+week: 15
+title: Secrets Management and Credential Rotation
+status: planned
+summary: Identify secrets in an IoT deployment and implement rotation without losing evidence or availability.
+difficulty: intermediate
+duration_minutes: 120
+learning_objectives:
+  - Locate and classify lab secrets.
+  - Rotate credentials with minimal service disruption.
+  - Verify that secrets are absent from images and source control.
+containers: []
+expected_services: []
+networks:
+  iot:
+    name: iotlab_w15_iot
+    subnet: 10.231.15.0/24
+    internal: true
+  mgmt:
+    name: iotlab_w15_mgmt
+    subnet: 10.232.15.0/24
+    internal: true
+reset:
+  strategy: rebuild-state
+  preserve:
+    - evidence
+  notes: Retains generated student keys while resetting lab service state.
+evidence:
+  path: /evidence
+  artifacts:
+    - secrets-inventory.md
+    - rotation-log.txt
+  retention: Retained for instructor review.
+safety:
+  privileged: false
+  host_network: false
+  external_ports: []
+  review_notes: Credentials are generated locally and never committed.
+assessment:
+  instructor_only: true
+  location: Instructor repository.

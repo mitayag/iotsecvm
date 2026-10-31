@@ -1,0 +1,42 @@
+schema_version: 1
+id: week17
+week: 17
+title: Incident Response and Evidence Handling
+status: planned
+summary: Investigate a simulated IoT compromise, preserve evidence and produce an incident timeline.
+difficulty: advanced
+duration_minutes: 150
+learning_objectives:
+  - Contain a simulated incident without destroying evidence.
+  - Preserve and verify evidence integrity.
+  - Produce a defensible incident timeline.
+containers: []
+expected_services: []
+networks:
+  iot:
+    name: iotlab_w17_iot
+    subnet: 10.231.17.0/24
+    internal: true
+  mgmt:
+    name: iotlab_w17_mgmt
+    subnet: 10.232.17.0/24
+    internal: true
+reset:
+  strategy: restore-snapshot
+  preserve:
+    - evidence
+  notes: Restores the seeded incident snapshot and retains exported evidence.
+evidence:
+  path: /evidence
+  artifacts:
+    - incident-timeline.md
+    - evidence-manifest.sha256
+  retention: Retained for instructor review.
+safety:
+  privileged: false
+  host_network: false
+  external_ports: []
+  review_notes: The simulated incident is fully contained in lab networks.
+assessment:
+  instructor_only: true
+  location: Instructor repository.

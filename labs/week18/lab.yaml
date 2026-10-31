@@ -1,0 +1,43 @@
+schema_version: 1
+id: week18
+week: 18
+title: Capstone IoT Security Assessment
+status: planned
+summary: Assess a multi-service IoT deployment, prioritise findings and present a remediation plan.
+difficulty: advanced
+duration_minutes: 240
+learning_objectives:
+  - Scope and execute an authorised end-to-end assessment.
+  - Prioritise findings by risk and business impact.
+  - Present evidence-backed remediation recommendations.
+containers: []
+expected_services: []
+networks:
+  iot:
+    name: iotlab_w18_iot
+    subnet: 10.231.18.0/24
+    internal: true
+  mgmt:
+    name: iotlab_w18_mgmt
+    subnet: 10.232.18.0/24
+    internal: true
+reset:
+  strategy: rebuild-state
+  preserve:
+    - evidence
+  notes: Resets the capstone environment while retaining student evidence.
+evidence:
+  path: /evidence
+  artifacts:
+    - assessment-report.md
+    - findings.csv
+    - evidence-manifest.sha256
+  retention: Retained for instructor review.
+safety:
+  privileged: false
+  host_network: false
+  external_ports: []
+  review_notes: Capstone targets match previous reviewed lab components.
+assessment:
+  instructor_only: true
+  location: Instructor repository.

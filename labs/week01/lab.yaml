@@ -1,0 +1,107 @@
+schema_version: 1
+id: week01
+week: 1
+title: Lab Environment and IoT Asset Discovery
+status: implemented
+summary: >-
+  Students build and inspect an isolated IoT laboratory, discover the virtual
+  camera, MQTT gateway and SSH controller, and record baseline evidence before
+  making any changes.
+difficulty: beginner
+duration_minutes: 90
+learning_objectives:
+  - Describe the isolation boundary between the IoT and management networks.
+  - Discover live IoT assets and exposed services with Nmap.
+  - Verify MQTT broker reachability from the gateway network.
+  - Record a baseline asset inventory as assessment evidence.
+prerequisites:
+  - Basic familiarity with the Linux command line.
+  - Ability to run Docker Compose commands.
+containers:
+  - name: camera
+    image: iotlab/week01-camera
+    role: target
+    description: Virtual IP camera exposing HTTP status and an RTSP-like control port.
+    networks:
+      - iot
+    internal_ports:
+      - 8080
+      - 8554
+    privileged: false
+    host_network: false
+    healthcheck: HTTP GET /health on port 8080
+  - name: gateway
+    image: iotlab/week01-gateway
+    role: gateway
+    description: Mosquitto MQTT broker bridging the IoT and management networks.
+    networks:
+      - iot
+      - mgmt
+    internal_ports:
+      - 1883
+    privileged: false
+    host_network: false
+    healthcheck: Publish a health message to the local broker
+  - name: controller
+    image: iotlab/week01-controller
+    role: controller
+    description: Key-only SSH controller used for later configuration exercises.
+    networks:
+      - mgmt
+    internal_ports:
+      - 22
+    privileged: false
+    host_network: false
+    healthcheck: TCP connect to local port 22
+expected_services:
+  - name: camera-http
+    container: camera
+    port: 8080
+    protocol: tcp
+    description: Camera status and event API.
+  - name: camera-rtsp
+    container: camera
+    port: 8554
+    protocol: tcp
+    description: RTSP-like control endpoint for discovery practice.
+  - name: mqtt
+    container: gateway
+    port: 1883
+    protocol: tcp
+    description: MQTT broker listener.
+  - name: ssh
+    container: controller
+    port: 22
+    protocol: tcp
+    description: SSH control plane.
+networks:
+  iot:
+    name: iotlab_w01_iot
+    subnet: 10.231.1.0/24
+    internal: true
+  mgmt:
+    name: iotlab_w01_mgmt
+    subnet: 10.232.1.0/24
+    internal: true
+reset:
+  strategy: rebuild-state
+  preserve:
+    - evidence
+  notes: Removes camera and broker state volumes, then recreates healthy containers.
+evidence:
+  path: /evidence
+  artifacts:
+    - camera-events.log
+    - nmap-baseline.txt
+    - asset-inventory.md
+  retention: Retained until the instructor archives the cohort evidence volume.
+safety:
+  privileged: false
+  host_network: false
+  external_ports: []
+  review_notes: >-
+    No lab service is published to the host. MQTT anonymous access is
+    intentional and confined to internal Docker networks.
+assessment:
+  instructor_only: true
+  location: Instructor repository, not distributed with the student VM.

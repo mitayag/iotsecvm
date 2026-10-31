@@ -1,0 +1,26 @@
+name: iotlab-weekNN
+
+services:
+  target:
+    build:
+      context: ./images/target
+    image: iotlab/weekNN-target:${IOTLAB_VERSION:-0.1.0}
+    container_name: iotlab_wNN_target
+    restart: unless-stopped
+    networks:
+      - iot
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+networks:
+  iot:
+    external: true
+    name: iotlab_wNN_iot
+  mgmt:
+    external: true
+    name: iotlab_wNN_mgmt

@@ -1,0 +1,42 @@
+schema_version: 1
+id: week02
+week: 2
+title: IoT Traffic Capture and Protocol Analysis
+status: planned
+summary: Capture and analyse MQTT and HTTP traffic on an isolated segment to establish a protocol baseline.
+difficulty: beginner
+duration_minutes: 90
+learning_objectives:
+  - Capture traffic without exposing lab services to the host.
+  - Identify MQTT publish and subscribe flows.
+  - Document protocol metadata as evidence.
+containers: []
+expected_services: []
+networks:
+  iot:
+    name: iotlab_w02_iot
+    subnet: 10.231.2.0/24
+    internal: true
+  mgmt:
+    name: iotlab_w02_mgmt
+    subnet: 10.232.2.0/24
+    internal: true
+reset:
+  strategy: rebuild-state
+  preserve:
+    - evidence
+  notes: Recreates network captures from a clean broker and camera state.
+evidence:
+  path: /evidence
+  artifacts:
+    - traffic-baseline.pcap
+    - protocol-notes.md
+  retention: Retained for instructor review.
+safety:
+  privileged: false
+  host_network: false
+  external_ports: []
+  review_notes: Packet capture remains within internal bridge networks.
+assessment:
+  instructor_only: true
+  location: Instructor repository.

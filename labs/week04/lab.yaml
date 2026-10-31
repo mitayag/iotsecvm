@@ -1,0 +1,42 @@
+schema_version: 1
+id: week04
+week: 4
+title: MQTT Topic Injection and Message Integrity
+status: planned
+summary: Examine unauthenticated topic injection and design message integrity controls for an IoT deployment.
+difficulty: intermediate
+duration_minutes: 120
+learning_objectives:
+  - Demonstrate topic injection against an authorised lab broker.
+  - Assess the effect of spoofed sensor readings.
+  - Design integrity and authorisation controls.
+containers: []
+expected_services: []
+networks:
+  iot:
+    name: iotlab_w04_iot
+    subnet: 10.231.4.0/24
+    internal: true
+  mgmt:
+    name: iotlab_w04_mgmt
+    subnet: 10.232.4.0/24
+    internal: true
+reset:
+  strategy: rebuild-state
+  preserve:
+    - evidence
+  notes: Removes injected messages and rebuilds broker state.
+evidence:
+  path: /evidence
+  artifacts:
+    - injection-transcript.txt
+    - mitigation-plan.md
+  retention: Retained for instructor review.
+safety:
+  privileged: false
+  host_network: false
+  external_ports: []
+  review_notes: All injection is confined to the lab broker.
+assessment:
+  instructor_only: true
+  location: Instructor repository.

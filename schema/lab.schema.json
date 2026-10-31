@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hau.edu.ph/iotlab/lab.schema.json",
+  "title": "HAU IoT Security Lab Manifest",
+  "description": "Standard specification for a weekly laboratory module.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "week",
+    "title",
+    "status",
+    "summary",
+    "difficulty",
+    "duration_minutes",
+    "learning_objectives",
+    "containers",
+    "expected_services",
+    "networks",
+    "reset",
+    "evidence",
+    "safety"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^week(0[1-9]|1[0-8])$"
+    },
+    "week": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 18
+    },
+    "title": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 120
+    },
+    "status": {
+      "enum": ["planned", "implemented"]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 1000
+    },
+    "difficulty": {
+      "enum": ["beginner", "intermediate", "advanced"]
+    },
+    "duration_minutes": {
+      "type": "integer",
+      "minimum": 15,
+      "maximum": 480
+    },
+    "learning_objectives": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 5
+      }
+    },
+    "prerequisites": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "containers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "image", "role", "internal_ports"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{1,30}$"
+          },
+          "image": {
+            "type": "string",
+            "minLength": 3
+          },
+          "role": {
+            "enum": ["target", "gateway", "controller", "service", "tooling"]
+          },
+          "description": {
+            "type": "string"
+          },
+          "networks": {
+            "type": "array",
+            "items": {
+              "enum": ["iot", "mgmt"]
+            },
+            "uniqueItems": true
+          },
+          "internal_ports": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            },
+            "uniqueItems": true
+          },
+          "privileged": {
+            "const": false
+          },
+          "host_network": {
+            "const": false
+          },
+          "healthcheck": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "expected_services": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "container", "port", "protocol"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "container": {
+            "type": "string"
+          },
+          "port": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "protocol": {
+            "enum": ["tcp", "udp"]
+          },
+          "description": {
+            "type": "string"
+          },
+          "tls": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "networks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["iot", "mgmt"],
+      "properties": {
+        "iot": {
+          "$ref": "#/$defs/network"
+        },
+        "mgmt": {
+          "$ref": "#/$defs/network"
+        }
+      }
+    },
+    "reset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strategy", "preserve"],
+      "properties": {
+        "strategy": {
+          "enum": ["rebuild-state", "restore-snapshot", "custom"]
+        },
+        "preserve": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "contains": {
+            "const": "evidence"
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "artifacts"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^/"
+        },
+        "artifacts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "retention": {
+          "type": "string"
+        }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["privileged", "host_network", "external_ports"],
+      "properties": {
+        "privileged": {
+          "const": false
+        },
+        "host_network": {
+          "const": false
+        },
+        "external_ports": {
+          "type": "array",
+          "maxItems": 0,
+          "items": {
+            "type": "integer"
+          }
+        },
+        "review_notes": {
+          "type": "string"
+        }
+      }
+    },
+    "assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["instructor_only"],
+      "properties": {
+        "instructor_only": {
+          "const": true
+        },
+        "location": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "network": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "subnet", "internal"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^iotlab_w[0-9]{2}_(iot|mgmt)$"
+        },
+        "subnet": {
+          "type": "string",
+          "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}/[0-9]{1,2}$"
+        },
+        "internal": {
+          "const": true
+        }
+      }
+    }
+  }
+}

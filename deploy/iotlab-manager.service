@@ -1,0 +1,25 @@
+[Unit]
+Description=HAU IoT Security Lab Manager
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=iotlab
+Group=iotlab
+WorkingDirectory=/opt/iotlab/current
+Environment=IOTLAB_ROOT=/opt/iotlab/current
+Environment=IOTLAB_ALLOW_MUTATIONS=0
+ExecStart=/opt/iotlab/venv/bin/uvicorn backend.app.main:app --app-dir /opt/iotlab/current --host 127.0.0.1 --port 8080
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/opt/iotlab/var
+CapabilityBoundingSet=
+AmbientCapabilities=
+
+[Install]
+WantedBy=multi-user.target

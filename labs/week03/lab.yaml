@@ -1,0 +1,42 @@
+schema_version: 1
+id: week03
+week: 3
+title: MQTT Broker Configuration Review
+status: planned
+summary: Review broker configuration, enumerate topics and assess anonymous access within the lab boundary.
+difficulty: beginner
+duration_minutes: 90
+learning_objectives:
+  - Enumerate an MQTT broker from an authorised lab host.
+  - Explain the risk of anonymous publish and subscribe access.
+  - Propose a least-privilege broker configuration.
+containers: []
+expected_services: []
+networks:
+  iot:
+    name: iotlab_w03_iot
+    subnet: 10.231.3.0/24
+    internal: true
+  mgmt:
+    name: iotlab_w03_mgmt
+    subnet: 10.232.3.0/24
+    internal: true
+reset:
+  strategy: rebuild-state
+  preserve:
+    - evidence
+  notes: Restores broker configuration and removes retained messages.
+evidence:
+  path: /evidence
+  artifacts:
+    - topic-inventory.txt
+    - broker-review.md
+  retention: Retained for instructor review.
+safety:
+  privileged: false
+  host_network: false
+  external_ports: []
+  review_notes: Broker access stays inside internal networks.
+assessment:
+  instructor_only: true
+  location: Instructor repository.

@@ -1,0 +1,42 @@
+schema_version: 1
+id: week06
+week: 6
+title: Firmware Extraction and Static Analysis
+status: planned
+summary: Extract a simulated firmware image and review its file system, services and embedded configuration.
+difficulty: intermediate
+duration_minutes: 120
+learning_objectives:
+  - Extract and inspect a firmware image safely.
+  - Identify hard-coded configuration and exposed services.
+  - Document findings with supporting evidence.
+containers: []
+expected_services: []
+networks:
+  iot:
+    name: iotlab_w06_iot
+    subnet: 10.231.6.0/24
+    internal: true
+  mgmt:
+    name: iotlab_w06_mgmt
+    subnet: 10.232.6.0/24
+    internal: true
+reset:
+  strategy: rebuild-state
+  preserve:
+    - evidence
+  notes: Restores the firmware sample and analysis workspace.
+evidence:
+  path: /evidence
+  artifacts:
+    - firmware-inventory.txt
+    - static-analysis.md
+  retention: Retained for instructor review.
+safety:
+  privileged: false
+  host_network: false
+  external_ports: []
+  review_notes: Firmware analysis occurs in a disposable container.
+assessment:
+  instructor_only: true
+  location: Instructor repository.

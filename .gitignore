@@ -1,0 +1,39 @@
+# Local runtime state and evidence
+var/*
+!var/.gitkeep
+!var/evidence/
+!var/secrets/
+!var/backups/
+!var/deploy/
+var/evidence/*
+var/secrets/*
+var/backups/*
+var/deploy/*
+!var/evidence/.gitkeep
+!var/secrets/.gitkeep
+!var/backups/.gitkeep
+!var/deploy/.gitkeep
+
+# Deployment artefacts
+dist/*
+!dist/.gitkeep
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Secrets and keys
+*.pem
+*.key
+*.ed25519
+*_authorized_keys
+
+# Editor and OS
+.DS_Store
+.idea/
+.vscode/
+*.swp

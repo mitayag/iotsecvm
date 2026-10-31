@@ -1,0 +1,123 @@
+name: iotlab-week01
+
+services:
+  camera:
+    build:
+      context: ./images/camera
+    image: iotlab/week01-camera:${IOTLAB_VERSION:-0.1.0}
+    container_name: iotlab_w01_camera
+    restart: unless-stopped
+    networks:
+      - iot
+    volumes:
+      - camera_state:/state
+      - evidence:/evidence
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    environment:
+      STATE_DIR: /state
+      EVIDENCE_DIR: /evidence
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2)
+      interval: 15s
+      timeout: 4s
+      retries: 3
+      start_period: 10s
+    labels:
+      iotlab.lab: week01
+      iotlab.role: target
+
+  gateway:
+    build:
+      context: ./images/gateway
+    image: iotlab/week01-gateway:${IOTLAB_VERSION:-0.1.0}
+    container_name: iotlab_w01_gateway
+    restart: unless-stopped
+    user: "1883:1883"
+    networks:
+      - iot
+      - mgmt
+    volumes:
+      - gateway_data:/mosquitto/data
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mosquitto_pub -h 127.0.0.1 -p 1883 -t iotlab/health -m ok
+      interval: 15s
+      timeout: 4s
+      retries: 3
+      start_period: 10s
+    labels:
+      iotlab.lab: week01
+      iotlab.role: gateway
+
+  controller:
+    build:
+      context: ./images/controller
+    image: iotlab/week01-controller:${IOTLAB_VERSION:-0.1.0}
+    container_name: iotlab_w01_controller
+    restart: unless-stopped
+    networks:
+      - mgmt
+    volumes:
+      - evidence:/evidence
+    secrets:
+      - controller_authorized_keys
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - nc -z 127.0.0.1 22
+      interval: 15s
+      timeout: 4s
+      retries: 3
+      start_period: 10s
+    labels:
+      iotlab.lab: week01
+      iotlab.role: controller
+
+networks:
+  iot:
+    external: true
+    name: iotlab_w01_iot
+  mgmt:
+    external: true
+    name: iotlab_w01_mgmt
+
+volumes:
+  camera_state:
+    name: iotlab_w01_camera_state
+    labels:
+      iotlab.lab: week01
+      iotlab.role: state
+  gateway_data:
+    name: iotlab_w01_gateway_data
+    labels:
+      iotlab.lab: week01
+      iotlab.role: state
+  evidence:
+    name: iotlab_w01_evidence
+    labels:
+      iotlab.lab: week01
+      iotlab.role: evidence
+
+secrets:
+  controller_authorized_keys:
+    file: ${IOTLAB_AUTH_KEYS_FILE:-../../var/secrets/week01_controller_authorized_keys}

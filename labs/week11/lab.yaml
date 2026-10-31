@@ -1,0 +1,42 @@
+schema_version: 1
+id: week11
+week: 11
+title: TLS Configuration and Certificate Validation
+status: planned
+summary: Inspect TLS settings for an IoT service and evaluate certificate validation behaviour.
+difficulty: intermediate
+duration_minutes: 120
+learning_objectives:
+  - Enumerate supported TLS versions and cipher suites.
+  - Evaluate certificate trust and hostname validation.
+  - Produce a TLS hardening recommendation.
+containers: []
+expected_services: []
+networks:
+  iot:
+    name: iotlab_w11_iot
+    subnet: 10.231.11.0/24
+    internal: true
+  mgmt:
+    name: iotlab_w11_mgmt
+    subnet: 10.232.11.0/24
+    internal: true
+reset:
+  strategy: rebuild-state
+  preserve:
+    - evidence
+  notes: Regenerates lab certificates and service state.
+evidence:
+  path: /evidence
+  artifacts:
+    - tls-scan.txt
+    - hardening-report.md
+  retention: Retained for instructor review.
+safety:
+  privileged: false
+  host_network: false
+  external_ports: []
+  review_notes: Test certificates are generated per deployment and never reused.
+assessment:
+  instructor_only: true
+  location: Instructor repository.

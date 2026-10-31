@@ -1,0 +1,42 @@
+schema_version: 1
+id: week10
+week: 10
+title: API Authorisation and Object Access
+status: planned
+summary: Test a simulated IoT management API for missing authorisation and insecure direct object references.
+difficulty: intermediate
+duration_minutes: 120
+learning_objectives:
+  - Enumerate API resources with an authorised test account.
+  - Test object-level authorisation boundaries.
+  - Recommend server-side access control changes.
+containers: []
+expected_services: []
+networks:
+  iot:
+    name: iotlab_w10_iot
+    subnet: 10.231.10.0/24
+    internal: true
+  mgmt:
+    name: iotlab_w10_mgmt
+    subnet: 10.232.10.0/24
+    internal: true
+reset:
+  strategy: rebuild-state
+  preserve:
+    - evidence
+  notes: Restores seeded API data and test accounts.
+evidence:
+  path: /evidence
+  artifacts:
+    - api-requests.http
+    - access-control-report.md
+  retention: Retained for instructor review.
+safety:
+  privileged: false
+  host_network: false
+  external_ports: []
+  review_notes: The API is reachable only from lab networks.
+assessment:
+  instructor_only: true
+  location: Instructor repository.
