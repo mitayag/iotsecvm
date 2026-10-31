@@ -23,6 +23,7 @@ root systemd operation remain pending.
 | Stage 1 commit | `78785ed` - `feat: complete Stage 1 IoT lab foundation` |
 | Stage 2 commit | `aacd4aa` - `feat: add functional Stage 2 lab manager and helper` |
 | Acceptance prep commit | `d26c2a7` - `test: prepare native Ubuntu acceptance and offline tools` |
+| Evidence-race fix commit | `7fa3f2d` - `fix: make evidence volume writable regardless of start order` |
 | Remote | `origin` -> `https://github.com/mitayag/iotsecvm.git` |
 | Remote state before push | Empty repository; no conflicting history |
 | Push | Authorized, non-force push to `origin/main` |
@@ -61,6 +62,23 @@ The Stage 1 commit and Stage 2 changes were audited before publication:
 The SSH push did not change the configured HTTPS origin and did not overwrite
 remote history. The integration run executed the Linux-only peer UID rejection
 test that is skipped on macOS.
+
+### CI failure and remediation
+
+The documentation-only run `41188302909` failed the Lab Manager end-to-end test
+because `camera-events.log` was missing from the evidence volume. The controller
+container had initialised the volume as root before the camera started, making
+the camera's evidence writes fail intermittently.
+
+Fix `7fa3f2d` makes the controller normalise `/evidence` ownership to the camera
+UID before writing its own log. Validation performed:
+
+- two fresh-volume repetitions of `tests/test_manager_e2e.py`: passed,
+- full local suite: 61 passed, 1 skipped,
+- fix CI runs `41188742045`, `41188742064`, `41188742033`: all success,
+- fix integration run: 62 passed, 1 warning in 83.62s.
+
+The failed run and remediation are recorded rather than hidden.
 
 ## Phase B: Functional Lab Manager
 
