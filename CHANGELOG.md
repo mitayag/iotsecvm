@@ -19,6 +19,11 @@ All notable changes to the HAU IoT Security Virtual Laboratory are recorded here
   test client, included in the x86-64 bundle.
 - Native Ubuntu 24.04 acceptance script with automated Week 1 manager checks.
 
+### Fixed
+
+- Controller startup now normalises evidence volume ownership so the camera can
+  always write `camera-events.log` regardless of container start order.
+
 ### Security
 
 - The web manager has no Docker socket and never executes scripts directly.

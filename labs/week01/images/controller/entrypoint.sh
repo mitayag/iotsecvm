@@ -3,6 +3,7 @@ set -eu
 
 mkdir -p /run/sshd /home/labuser/.ssh /evidence
 chmod 0755 /run/sshd
+chown 10001:10001 /evidence
 chown -R labuser:labuser /home/labuser/.ssh
 chmod 0700 /home/labuser/.ssh
 

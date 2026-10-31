@@ -140,7 +140,7 @@ macOS arm64 development host.
 ```text
 dist/iotlab-0.2.0-offline-x86_64.tar.gz
 72 MiB
-SHA256 559d29528cba9f4d4eea177500c8ae633dcaf098ba474d419717b103b1028aaf
+SHA256 3719f491e7eb33b8f77e2e55f906592a0886dd7a98049c1b465b2cff42b29dec
 ```
 
 Checksums, image load and offline dependency installation were executed:
@@ -180,7 +180,7 @@ installation and `iotlab-students` group access were **not executed** on this ma
 Final local run:
 
 ```text
-61 passed, 1 skipped, 1 warning in 66.24s
+61 passed, 1 skipped, 1 warning in 62.54s
 ```
 
 The skipped test is Linux-only peer UID rejection; it is expected to run in
