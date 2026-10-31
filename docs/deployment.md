@@ -40,6 +40,8 @@ bundle contains:
 - the source tree,
 - `images/iotlab-images.tar` from `docker save`,
 - `images/manifest.txt` with image IDs and repository digests,
+- offline support images (`alpine:3.20.3`, `instrumentisto/nmap:7.95-r0`),
+- an offline SSH test client image (`iotlab/test-ssh-client:<version>`),
 - Linux x86-64 Python wheels for the manager,
 - `SHA256SUMS`.
 
@@ -88,6 +90,22 @@ sudo usermod -aG iotlab-students student
 ```
 
 Log out and back in for the group change to take effect.
+
+## Native Ubuntu acceptance test
+
+On the disposable Ubuntu 24.04 x86-64 VM:
+
+```bash
+sudo scripts/acceptance-ubuntu.sh \
+  --bundle dist/iotlab-0.2.0-offline-x86_64.tar.gz \
+  --sha256 <bundle-sha256> \
+  --student-user student
+```
+
+The script refuses to run outside Ubuntu 24.04 x86-64 or without root, installs
+from the bundle, validates services/permissions/desktop integration, exercises
+Week 1 through the Lab Manager and writes a Markdown report under `/var/log/`.
+See `docs/ubuntu-acceptance.md`.
 
 ## Update from a new bundle
 

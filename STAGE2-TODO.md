@@ -23,6 +23,8 @@
 - [ ] Configure a GitHub remote and push the validated repository.
 - [ ] Run GitHub Actions and record results.
 - [ ] Install on native Ubuntu 24.04 LTS x86-64.
+- [x] Prepare `scripts/acceptance-ubuntu.sh` and its acceptance procedure.
+- [ ] Execute the prepared acceptance script on Ubuntu.
 - [ ] Exercise the root helper through systemd on Ubuntu.
 - [ ] Verify desktop launcher and per-student `iotlab` group access on Ubuntu.
 - [ ] Execute the full offline wheel install on the Ubuntu target.

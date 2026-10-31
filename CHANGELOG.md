@@ -15,6 +15,9 @@ All notable changes to the HAU IoT Security Virtual Laboratory are recorded here
 - Helper and manager systemd units and desktop launcher.
 - SSH key group permissions for student access.
 - Helper, API and manager end-to-end tests.
+- Offline support images for Nmap and evidence tooling, plus an offline SSH
+  test client, included in the x86-64 bundle.
+- Native Ubuntu 24.04 acceptance script with automated Week 1 manager checks.
 
 ### Security
 

@@ -135,14 +135,16 @@ macOS arm64 development host.
 
 ```text
 dist/iotlab-0.2.0-offline-x86_64.tar.gz
-56 MiB
-SHA256 ed817a50d4a11f3f02a59d867db9071eb903c89aa91522e900c6ddd0ec25cce0
+72 MiB
+SHA256 559d29528cba9f4d4eea177500c8ae633dcaf098ba474d419717b103b1028aaf
 ```
 
 Checksums, image load and offline dependency installation were executed:
 
 - `shasum -a 256 -c SHA256SUMS`: passed.
-- `docker load` of all three images: passed.
+- `docker load` of all three lab images plus the offline support tools: passed.
+- Offline support images include `alpine:3.20.3`,
+  `instrumentisto/nmap:7.95-r0` and `iotlab/test-ssh-client:0.2.0`.
 - Linux x86-64 wheel install in `python:3.12.8-slim-bookworm`: passed.
 - Imports of FastAPI, schema, manager and helper: passed.
 - Offline manifest validation: 18 manifests, 0 errors.

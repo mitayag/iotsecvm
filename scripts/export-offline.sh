@@ -33,6 +33,32 @@ hash_files() {
   fi
 }
 
+SUPPORT_IMAGES=(
+  "alpine:3.20.3"
+  "instrumentisto/nmap:7.95-r0"
+)
+
+pull_platform_image() {
+  local image="$1" platform="$2" arch="$3" name digest
+  name="${image%:*}"
+  digest="$(docker manifest inspect -v "$image" | python3 -c "
+import json, sys
+items = json.load(sys.stdin)
+if isinstance(items, dict):
+    items = [items]
+match = [
+    item for item in items
+    if item.get('Descriptor', {}).get('platform', {}).get('os') == 'linux'
+    and item.get('Descriptor', {}).get('platform', {}).get('architecture') == '$arch'
+]
+if not match:
+    raise SystemExit('no $arch manifest for $image')
+print(match[0]['Descriptor']['digest'])
+")"
+  docker pull --quiet "${name}@${digest}" >/dev/null
+  docker tag "${name}@${digest}" "$image"
+}
+
 main() {
   local with_wheels=1
   local skip_build=0
@@ -76,15 +102,28 @@ main() {
     done
   fi
 
+  log "preparing offline support images"
+  local support_image
+  for support_image in "${SUPPORT_IMAGES[@]}"; do
+    pull_platform_image "$support_image" "$platform" "${platform##*/}"
+  done
+  local ssh_client_image="iotlab/test-ssh-client:${IOTLAB_VERSION}"
+  docker build --quiet --platform "$platform" \
+    -t "$ssh_client_image" "$ROOT/tests/images/ssh-client" >/dev/null
+
   log "collecting image references"
   local images
   images="$(
-    for manifest in "$ROOT"/labs/week*/lab.yaml; do
-      local lab_dir
-      lab_dir="$(dirname "$manifest")"
-      [[ -f "$lab_dir/docker-compose.yml" ]] || continue
-      docker compose -f "$lab_dir/docker-compose.yml" config --images
-    done | sort -u
+    {
+      for manifest in "$ROOT"/labs/week*/lab.yaml; do
+        local lab_dir
+        lab_dir="$(dirname "$manifest")"
+        [[ -f "$lab_dir/docker-compose.yml" ]] || continue
+        docker compose -f "$lab_dir/docker-compose.yml" config --images
+      done
+      printf '%s\n' "${SUPPORT_IMAGES[@]}"
+      printf '%s\n' "$ssh_client_image"
+    } | sort -u
   )"
   [[ -n "$images" ]] || die "no lab images found to export"
 

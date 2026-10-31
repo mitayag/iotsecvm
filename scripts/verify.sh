@@ -53,6 +53,8 @@ required=(
   scripts/lab-inspect.sh
   scripts/lab-evidence-list.sh
   scripts/lab-evidence-read.sh
+  scripts/acceptance-ubuntu.sh
+  docs/ubuntu-acceptance.md
   docs/adding-labs.md
   docs/deployment.md
 )
